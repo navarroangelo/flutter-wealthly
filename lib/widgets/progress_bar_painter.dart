@@ -7,11 +7,10 @@ class ProgressBarPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    final startAngle = -3.14;
-    final sweepAngle = 3.14 * progress;
+    final center = Offset(size.width / 2, size.height);
+    final radius = size.width / 2;
 
-    final bgPaint = Paint()
+    final backgroundPaint = Paint()
       ..color = const Color(0xFF83c5be)
       ..strokeWidth = 14
       ..style = PaintingStyle.stroke;
@@ -21,12 +20,23 @@ class ProgressBarPainter extends CustomPainter {
       ..strokeWidth = 14
       ..style = PaintingStyle.stroke;
 
-    canvas.drawArc(rect, startAngle, 3.14, false, bgPaint);
-    canvas.drawArc(rect, startAngle, sweepAngle, false, progressPaint);
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      -3.14, // start at left
+      3.14, // draw full half-circle
+      false,
+      backgroundPaint,
+    );
+
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      -3.14,
+      3.14 * progress,
+      false,
+      progressPaint,
+    );
   }
 
   @override
-  bool shouldRepaint(covariant ProgressBarPainter oldDelegate) {
-    return oldDelegate.progress != progress;
-  }
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }

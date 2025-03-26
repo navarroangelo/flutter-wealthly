@@ -18,7 +18,7 @@ class RecordsScreen extends StatelessWidget {
         foregroundColor: Colors.white,
       ),
       body: transactions.isEmpty
-          ? const Center(child: Text("No transactions yet."))
+          ? const Center(child: Text("No Transactions Yet"))
           : ListView.separated(
               padding: const EdgeInsets.all(16),
               itemCount: transactions.length,

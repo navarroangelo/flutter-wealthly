@@ -90,12 +90,12 @@ flutter:
   #       - asset: fonts/TrajanPro.ttf
   #       - asset: fonts/TrajanPro_Bold.ttf
   #         weight: 700
-fonts:
-  - family: Nunito
-    fonts:
-      - asset: assets/fonts/Nunito-Regular.ttf
-      - asset: assets/fonts/Nunito-SemiBold.ttf
-      - asset: assets/fonts/Nunito-ExtraBold.ttf
+  fonts:
+    - family: Nunito
+      fonts:
+        - asset: fonts/Nunito-Regular.ttf
+        - asset: fonts/Nunito-SemiBold.ttf
+        - asset: fonts/Nunito-ExtraBold.ttf
 
 
   #
