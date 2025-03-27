@@ -18,21 +18,31 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
+        preferredSize: const Size.fromHeight(68),
         child: AppBar(
           backgroundColor: const Color(0xFF006d77),
           centerTitle: true,
           title: Align(
             alignment: Alignment.center,
             child: Padding(
-              padding: const EdgeInsets.only(top: 24),
-              child: const Text(
-                'WEALTHLY',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
+              padding: const EdgeInsets.only(top: 12),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/images/logotest.webp',
+                    height: 40,
+                  ),
+                  const SizedBox(width: 12),
+                  const Text(
+                    'WEALTHLY',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                      fontSize: 24,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -137,10 +147,21 @@ class HomeScreen extends StatelessWidget {
                             double.tryParse(amountController.text.trim());
 
                         if (name.isEmpty ||
-                            target == null ||
+                            amountController.text.trim().isEmpty ||
                             selectedDate == null) {
                           Fluttertoast.showToast(
                               msg: "Please Complete All Fields");
+                          return;
+                        }
+
+                        if (target == null) {
+                          Fluttertoast.showToast(msg: "Invalid Input");
+                          return;
+                        }
+
+                        if (target <= 0) {
+                          Fluttertoast.showToast(
+                              msg: "Amount Must Be Greater Than 0");
                           return;
                         }
 
@@ -267,7 +288,7 @@ class _ActiveGoalViewState extends State<ActiveGoalView> {
   Widget build(BuildContext context) {
     final goalProvider = Provider.of<GoalProvider>(context);
     final goal = goalProvider.currentGoal!;
-    final percent = (goal.progress * 100).clamp(0, 100).toStringAsFixed(0);
+    final percent = (goal.progress * 100).floor();
 
     return Center(
       child: Padding(
@@ -350,11 +371,11 @@ class _ActiveGoalViewState extends State<ActiveGoalView> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Color(0xFF006d77),
+                      color: const Color(0xFF006d77),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      '${(goal.progress * 100).clamp(0, 100).toStringAsFixed(0)}%',
+                      '$percent%',
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -549,7 +570,12 @@ class _ActiveGoalViewState extends State<ActiveGoalView> {
               ElevatedButton(
                 onPressed: () {
                   final amount = double.tryParse(controller.text);
-                  if (amount == null || amount <= 0) {
+                  if (amount == null) {
+                    Fluttertoast.showToast(msg: "Invalid Input");
+                    return;
+                  }
+
+                  if (amount <= 0) {
                     Fluttertoast.showToast(
                         msg: "Amount Must Be Greater Than 0");
                     return;
@@ -645,8 +671,10 @@ class CountdownNavBar extends StatelessWidget {
     final now = DateTime.now();
     final end = goal.deadline;
     final diff = end.difference(now);
+
     final months = (diff.inDays / 30).floor();
     final days = diff.inDays % 30;
+    final hours = diff.inHours % 24;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -661,7 +689,7 @@ class CountdownNavBar extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            '$months Months & $days Days To Target',
+            '$months Months, $days Days, and $hours Hours To Target',
             style: const TextStyle(color: Colors.white),
           ),
         ],

@@ -54,7 +54,7 @@ class RecordsScreen extends StatelessWidget {
                         Provider.of<GoalProvider>(context, listen: false)
                             .resetGoal();
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Goal has been reset!")),
+                          const SnackBar(content: Text("Goal Has Been Reset!")),
                         );
                       },
                     );
@@ -81,7 +81,7 @@ class RecordsScreen extends StatelessWidget {
                         Navigator.of(context).pop();
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                              content: Text("Goal has been deleted!")),
+                              content: Text("Goal Has Been Deleted!")),
                         );
                       },
                     );
@@ -143,7 +143,7 @@ class RecordsScreen extends StatelessWidget {
                     Navigator.of(ctx).pop();
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Invalid amount entered")),
+                      const SnackBar(content: Text("Invalid Amount Entered")),
                     );
                   }
                 },
@@ -285,7 +285,7 @@ class RecordsScreen extends StatelessWidget {
                       .deleteTransaction(index);
                   Navigator.of(ctx).pop();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Transaction deleted!")),
+                    const SnackBar(content: Text("Transaction Deleted!")),
                   );
                 },
                 style: ElevatedButton.styleFrom(
