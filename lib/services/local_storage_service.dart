@@ -9,28 +9,30 @@ class LocalStorageService {
 
   static Future<void> saveGoal(Goal goal) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString(_goalKey, jsonEncode(goal.toJson()));
+    final goalJson = jsonEncode(goal.toJson());
+    await prefs.setString('currentGoal', goalJson);
   }
 
-  static Future<void> saveTransactions(List<Transaction> txs) async {
+  static Future<void> saveTransactions(List<Transaction> transactions) async {
     final prefs = await SharedPreferences.getInstance();
-    final jsonList = txs.map((e) => e.toJson()).toList();
-    prefs.setString(_txKey, jsonEncode(jsonList));
+    final transactionsJson =
+        jsonEncode(transactions.map((tx) => tx.toJson()).toList());
+    await prefs.setString('transactions', transactionsJson);
   }
 
   static Future<Goal?> loadGoal() async {
     final prefs = await SharedPreferences.getInstance();
-    final data = prefs.getString(_goalKey);
-    if (data == null) return null;
-    return Goal.fromJson(jsonDecode(data));
+    final goalJson = prefs.getString('currentGoal');
+    if (goalJson == null) return null;
+    return Goal.fromJson(jsonDecode(goalJson));
   }
 
   static Future<List<Transaction>> loadTransactions() async {
     final prefs = await SharedPreferences.getInstance();
-    final data = prefs.getString(_txKey);
-    if (data == null) return [];
-    final List list = jsonDecode(data);
-    return list.map((e) => Transaction.fromJson(e)).toList();
+    final transactionsJson = prefs.getString('transactions');
+    if (transactionsJson == null) return [];
+    final List<dynamic> decoded = jsonDecode(transactionsJson);
+    return decoded.map((tx) => Transaction.fromJson(tx)).toList();
   }
 
   static Future<void> clearAll() async {

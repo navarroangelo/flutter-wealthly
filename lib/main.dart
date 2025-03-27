@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'screens/home_screen.dart';
 import 'services/goal_provider.dart';
+import 'screens/home_screen.dart';
+import 'screens/splash_screen.dart';
 
 void main() {
   runApp(const WealthlyApp());
@@ -23,7 +24,7 @@ class WealthlyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF006d77)),
           useMaterial3: true,
         ),
-        home: const HomeScreen(),
+        home: SplashScreen(),
       ),
     );
   }

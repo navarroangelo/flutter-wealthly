@@ -6,6 +6,7 @@ import '../models/goal_model.dart';
 import 'package:intl/intl.dart';
 import '../widgets/progress_bar_painter.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'goal_completion_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -24,8 +25,7 @@ class HomeScreen extends StatelessWidget {
           title: Align(
             alignment: Alignment.center,
             child: Padding(
-              padding: const EdgeInsets.only(
-                  top: 24), // Adjust this for vertical balance
+              padding: const EdgeInsets.only(top: 24),
               child: const Text(
                 'WEALTHLY',
                 style: TextStyle(
@@ -38,19 +38,18 @@ class HomeScreen extends StatelessWidget {
           ),
         ),
       ),
-
       body: goal == null ? const NoGoalView() : const ActiveGoalView(),
-
-      // ✅ Show FAB only when no goal is set
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: goal == null
-          ? FloatingActionButton(
-              backgroundColor: const Color(0xFF006d77),
-              child: const Icon(Icons.add),
-              onPressed: () => _openSetGoalDialog(context),
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 72),
+              child: FloatingActionButton(
+                backgroundColor: const Color(0xFF006d77),
+                child: const Icon(Icons.add),
+                onPressed: () => _openSetGoalDialog(context),
+              ),
             )
           : null,
-
-      // ✅ Show Countdown NavBar when a goal exists
       bottomNavigationBar: goal != null ? CountdownNavBar(goal: goal) : null,
     );
   }
@@ -67,7 +66,7 @@ class HomeScreen extends StatelessWidget {
           builder: (context, setState) {
             return AlertDialog(
               title: const Text(
-                'SET NEW GOAL',
+                'Set New Goal',
                 textAlign: TextAlign.center,
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
@@ -124,31 +123,38 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
               actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(ctx).pop(),
-                  child: const Text('Cancel'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    final name = nameController.text.trim();
-                    final target =
-                        double.tryParse(amountController.text.trim());
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(),
+                      child: const Text('Cancel'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        final name = nameController.text.trim();
+                        final target =
+                            double.tryParse(amountController.text.trim());
 
-                    if (name.isEmpty ||
-                        target == null ||
-                        selectedDate == null) {
-                      Fluttertoast.showToast(msg: "Please Complete All Fields");
-                      return;
-                    }
+                        if (name.isEmpty ||
+                            target == null ||
+                            selectedDate == null) {
+                          Fluttertoast.showToast(
+                              msg: "Please Complete All Fields");
+                          return;
+                        }
 
-                    Provider.of<GoalProvider>(context, listen: false).setGoal(
-                      name,
-                      target,
-                      selectedDate!,
-                    );
-                    Navigator.of(ctx).pop();
-                  },
-                  child: const Text('Confirm'),
+                        Provider.of<GoalProvider>(context, listen: false)
+                            .setGoal(
+                          name,
+                          target,
+                          selectedDate!,
+                        );
+                        Navigator.of(ctx).pop();
+                      },
+                      child: const Text('Confirm'),
+                    ),
+                  ],
                 ),
               ],
             );
@@ -164,37 +170,68 @@ class NoGoalView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Card(
-        elevation: 6,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        margin: const EdgeInsets.symmetric(horizontal: 30),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.savings_outlined,
-                  size: 60, color: Color(0xFF006d77)),
-              const SizedBox(height: 20),
-              const Text(
-                'NO GOALS SET',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 12),
-              FractionallySizedBox(
-                widthFactor: 0.3,
-                child: Container(height: 2, color: Colors.black54),
-              ),
-              const SizedBox(height: 12),
-              const Text(
-                'GET STARTED',
-                style: TextStyle(fontSize: 18),
-              ),
-            ],
+    return Stack(
+      children: [
+        Center(
+          child: Transform.translate(
+            offset: const Offset(0, -50),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Container(
+                      width: 180,
+                      height: 180,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color(0xFFE0F7FA),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 160,
+                      height: 160,
+                      child: CircularProgressIndicator(
+                        value: 0.0,
+                        strokeWidth: 8,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          const Color(0xFF006d77),
+                        ),
+                        backgroundColor: const Color(0xFFB2DFDB),
+                      ),
+                    ),
+                    const Icon(
+                      Icons.savings_rounded,
+                      size: 80,
+                      color: Color(0xFF006d77),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'No Goals Set',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF006d77),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Start your savings journey today!',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 }
@@ -217,10 +254,10 @@ class _ActiveGoalViewState extends State<ActiveGoalView> {
     if (goal.isComplete && !_dialogShown) {
       _dialogShown = true;
       Future.microtask(() {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (_) => const GoalCompleteDialog(),
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => const GoalCompletionScreen(),
+          ),
         );
       });
     }
@@ -238,50 +275,77 @@ class _ActiveGoalViewState extends State<ActiveGoalView> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Group 1: Progress Bar + Icon
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ShaderMask(
+                  shaderCallback: (bounds) => const LinearGradient(
+                    colors: [
+                      Color.fromARGB(255, 114, 190, 183),
+                      Color(0xFF006d77)
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ).createShader(bounds),
+                  child: Text(
+                    goal.name,
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Opacity(
+                  opacity: 0.3,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.edit,
+                      color: Color(0xFF006d77),
+                    ),
+                    onPressed: () => _openEditGoalDialog(context, goal),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
             Stack(
               alignment: Alignment.center,
-              clipBehavior:
-                  Clip.none, // Ensures content outside the Stack is not clipped
+              clipBehavior: Clip.none,
               children: [
-                // Progress Bar (Adjusted positioning to prevent clipping)
                 Positioned(
-                  top: -10, // Added spacing above the outer circle
+                  top: -10,
                   child: SizedBox(
-                    width: 180,
-                    height: 90, // Half-circle
+                    width: 185,
+                    height: 90,
                     child: CustomPaint(
                       painter: ProgressBarPainter(progress: goal.progress),
                     ),
                   ),
                 ),
-
-                // Outer Containing Circle (Reduced by 10%)
                 Container(
-                  width: 162, // 10% reduction
+                  width: 162,
                   height: 162,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: const Color(0xFF006d77),
-                      width: 1.5, // Thin border
+                      width: 1.5,
                     ),
                   ),
                 ),
-
-                // Piggy Icon (Inside the circle, properly centered)
                 const Positioned(
-                  top: 20, // Adjusted for new size
+                  top: 20,
                   child: Icon(
                     Icons.savings_rounded,
-                    size: 125, // Slightly smaller for spacing
+                    size: 125,
                     color: Color(0xFF006d77),
                   ),
                 ),
-
-                // Percentage Label (More spacing from Piggy)
                 Positioned(
-                  bottom: -12, // Moved lower for more space
+                  bottom: -12,
                   child: Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
@@ -300,10 +364,7 @@ class _ActiveGoalViewState extends State<ActiveGoalView> {
                 ),
               ],
             ),
-
-            const SizedBox(height: 48), // ⬆️ Between Group 1 and Group 2
-
-            // Group 2: Amounts
+            const SizedBox(height: 48),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -312,10 +373,7 @@ class _ActiveGoalViewState extends State<ActiveGoalView> {
                 _buildAmountColumn("TARGET", goal.targetAmount),
               ],
             ),
-
-            const SizedBox(height: 48), // ⬆️ Between Group 2 and Group 3
-
-            // Group 3: Buttons
+            const SizedBox(height: 48),
             ElevatedButton(
               onPressed: () => _openAddSavingsDialog(context),
               style: ElevatedButton.styleFrom(
@@ -323,7 +381,7 @@ class _ActiveGoalViewState extends State<ActiveGoalView> {
                 foregroundColor: Colors.white,
                 textStyle: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              child: const Text("ADD SAVING"),
+              child: const Text("ADD SAVINGS"),
             ),
             const SizedBox(height: 12),
             ElevatedButton(
@@ -337,7 +395,7 @@ class _ActiveGoalViewState extends State<ActiveGoalView> {
                 foregroundColor: Colors.white,
                 textStyle: const TextStyle(fontWeight: FontWeight.bold),
               ),
-              child: const Text("SEE RECORD"),
+              child: const Text("SEE RECORDS"),
             ),
           ],
         ),
@@ -355,42 +413,164 @@ class _ActiveGoalViewState extends State<ActiveGoalView> {
     );
   }
 
+  void _openEditGoalDialog(BuildContext context, Goal goal) {
+    final nameController = TextEditingController(text: goal.name);
+    final amountController =
+        TextEditingController(text: goal.targetAmount.toStringAsFixed(2));
+    DateTime? selectedDate = goal.deadline;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            title: const Text(
+              "Edit Goal",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 12),
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(labelText: "Goal Name"),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: amountController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: "Goal Amount"),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Target Date:"),
+                    TextButton(
+                      onPressed: () async {
+                        final pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: selectedDate ?? DateTime.now(),
+                          firstDate: DateTime.now(),
+                          lastDate: DateTime(DateTime.now().year + 5),
+                        );
+                        if (pickedDate != null) {
+                          setState(() {
+                            selectedDate = pickedDate;
+                          });
+                        }
+                      },
+                      child: Text(
+                        selectedDate != null
+                            ? DateFormat('MM/dd/yyyy').format(selectedDate!)
+                            : "Choose Date",
+                        style: TextStyle(
+                          color:
+                              selectedDate != null ? Colors.black : Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    child: const Text("Cancel"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      final newName = nameController.text.trim();
+                      final newAmount =
+                          double.tryParse(amountController.text.trim());
+
+                      if (newName.isEmpty ||
+                          newAmount == null ||
+                          selectedDate == null) {
+                        Fluttertoast.showToast(
+                            msg: "Please complete all fields!");
+                        return;
+                      }
+
+                      Provider.of<GoalProvider>(context, listen: false)
+                          .updateGoal(newName, newAmount, selectedDate!);
+                      Navigator.of(ctx).pop();
+                    },
+                    child: const Text("Save"),
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
   void _openAddSavingsDialog(BuildContext context) {
     final controller = TextEditingController();
-    final goal = Provider.of<GoalProvider>(context, listen: false).currentGoal;
+    final goalProvider = Provider.of<GoalProvider>(context, listen: false);
+    final goal = goalProvider.currentGoal;
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text("Add to Savings"),
+        title: const Text(
+          "Add To Savings",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
         content: TextField(
           controller: controller,
           keyboardType: TextInputType.number,
           decoration: const InputDecoration(labelText: "Amount"),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text("Cancel"),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final amount = double.tryParse(controller.text);
-              if (amount == null || amount <= 0) {
-                Fluttertoast.showToast(msg: "Amount Must Be Greater Than 0");
-                return;
-              }
-              if (goal != null &&
-                  (goal.savedAmount + amount) > goal.targetAmount) {
-                Fluttertoast.showToast(
-                    msg: "This Will Exceed Your Goal Amount!");
-                return;
-              }
-              Provider.of<GoalProvider>(context, listen: false)
-                  .addToSavings(amount);
-              Navigator.of(ctx).pop();
-            },
-            child: const Text("Confirm"),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text("Cancel"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  final amount = double.tryParse(controller.text);
+                  if (amount == null || amount <= 0) {
+                    Fluttertoast.showToast(
+                        msg: "Amount Must Be Greater Than 0");
+                    return;
+                  }
+
+                  goalProvider.addToSavings(amount);
+
+                  if (goal != null && goal.savedAmount >= goal.targetAmount) {
+                    Navigator.of(ctx).pop();
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (_) => const GoalCompletionScreen(),
+                      ),
+                    );
+                  } else {
+                    Navigator.of(ctx).pop();
+                  }
+                },
+                child: const Text("Confirm"),
+              ),
+            ],
           ),
         ],
       ),
@@ -404,13 +584,39 @@ class GoalCompleteDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("🎉 Goal Achieved!"),
-      content: const Column(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: ShaderMask(
+        shaderCallback: (bounds) => const LinearGradient(
+          colors: [Color(0xFF006d77), Color(0xFF83c5be)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ).createShader(bounds),
+        child: const Text(
+          "Goal Achieved",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ),
+      content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text("Congratulations! You've reached your savings goal."),
-          SizedBox(height: 20),
-          Text("🎊🎊🎊", style: TextStyle(fontSize: 30)),
+          const SizedBox(height: 20),
+          const Icon(
+            Icons.celebration_rounded,
+            size: 80,
+            color: Color(0xFF006d77),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            "Congratulations! You've reached your savings goal.",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 20),
         ],
       ),
       actions: [
@@ -419,7 +625,11 @@ class GoalCompleteDialog extends StatelessWidget {
             Provider.of<GoalProvider>(context, listen: false).resetGoal();
             Navigator.of(context).pop();
           },
-          child: const Text("Reset"),
+          style: TextButton.styleFrom(
+            foregroundColor: const Color(0xFF006d77),
+            textStyle: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          child: const Text("End Goal"),
         ),
       ],
     );
@@ -439,8 +649,7 @@ class CountdownNavBar extends StatelessWidget {
     final days = diff.inDays % 30;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-          horizontal: 20, vertical: 20), // ← Increased vertical
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       color: const Color(0xFF006d77),
       child: Column(
         mainAxisSize: MainAxisSize.min,

@@ -22,8 +22,8 @@ class ProgressBarPainter extends CustomPainter {
 
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
-      -3.14, // start at left
-      3.14, // draw full half-circle
+      -3.14, 
+      3.14, 
       false,
       backgroundPaint,
     );

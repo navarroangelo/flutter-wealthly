@@ -11,7 +11,7 @@ class GoalProvider with ChangeNotifier {
   List<Transaction> get transactions => _transactions;
 
   GoalProvider() {
-    loadData(); // 🔄 Load saved state on app start
+    loadData();
   }
 
   Future<void> loadData() async {
@@ -61,16 +61,55 @@ class GoalProvider with ChangeNotifier {
   }
 
   Future<void> resetGoal() async {
-    _currentGoal = null;
-    _transactions = [];
-    await LocalStorageService.clearAll();
-    notifyListeners();
+    if (_currentGoal != null) {
+      _currentGoal!.savedAmount = 0.0;
+      _transactions = [];
+      await _persist();
+      notifyListeners();
+    }
   }
 
   Future<void> _persist() async {
     if (_currentGoal != null) {
       await LocalStorageService.saveGoal(_currentGoal!);
       await LocalStorageService.saveTransactions(_transactions);
+    }
+  }
+
+  Future<void> editTransaction(int index, double newAmount) async {
+    if (_currentGoal == null) return;
+
+    final tx = _transactions[index];
+    final difference = newAmount - tx.amount;
+
+    _transactions[index] = Transaction(
+      amount: newAmount,
+      date: tx.date,
+      before: tx.before,
+      after: tx.before + newAmount,
+    );
+
+    _currentGoal!.savedAmount += difference;
+
+    await _persist();
+    notifyListeners();
+  }
+
+  Future<void> deleteGoal() async {
+    _currentGoal = null;
+    _transactions = [];
+    await LocalStorageService.clearAll();
+    notifyListeners();
+  }
+
+  void updateGoal(
+      String newName, double newTargetAmount, DateTime newDeadline) {
+    if (_currentGoal != null) {
+      _currentGoal!.name = newName;
+      _currentGoal!.targetAmount = newTargetAmount;
+      _currentGoal!.deadline = newDeadline;
+      notifyListeners();
+      _persist();
     }
   }
 }
