@@ -109,7 +109,7 @@ class HomeScreen extends StatelessWidget {
                             context: context,
                             initialDate: nowPH,
                             firstDate: nowPH,
-                            lastDate: DateTime(nowPH.year + 5),
+                            lastDate: DateTime(2126),
                           );
                           if (picked != null) {
                             setState(() {
@@ -162,6 +162,11 @@ class HomeScreen extends StatelessWidget {
                         if (target <= 0) {
                           Fluttertoast.showToast(
                               msg: "Amount Must Be Greater Than 0");
+                          return;
+                        }
+
+                        if (target > 100000000.000) {
+                          Fluttertoast.showToast(msg: "Amount Exceeds Maximum");
                           return;
                         }
 
@@ -479,7 +484,7 @@ class _ActiveGoalViewState extends State<ActiveGoalView> {
                           context: context,
                           initialDate: selectedDate ?? DateTime.now(),
                           firstDate: DateTime.now(),
-                          lastDate: DateTime(DateTime.now().year + 5),
+                          lastDate: DateTime(2126),
                         );
                         if (pickedDate != null) {
                           setState(() {
@@ -520,6 +525,11 @@ class _ActiveGoalViewState extends State<ActiveGoalView> {
                           selectedDate == null) {
                         Fluttertoast.showToast(
                             msg: "Please complete all fields!");
+                        return;
+                      }
+
+                      if (newAmount > 100000000.000) {
+                        Fluttertoast.showToast(msg: "Amount Exceeds Maximum");
                         return;
                       }
 
